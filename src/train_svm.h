@@ -1,0 +1,9 @@
+#include SVM
+
+//LOAD CROPPED DATASET
+//
+//EMBDDING ARRAY
+//
+//TRAIN
+//
+//SAVE MODEL
