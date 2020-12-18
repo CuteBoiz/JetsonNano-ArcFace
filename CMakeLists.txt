@@ -26,16 +26,44 @@ find_package(OpenCV REQUIRED)
 #aux_source_directory(src DIR_SRCS)
 
 add_executable(predict 
-			src/*h 
-			src/predict_main.cpp 
+			src/main_predict.cpp 
+			src/baseEngine.h
 			src/baseEngine.cpp
+			src/common.h
 			src/common.cpp 
+			src/mtcnn.h
 			src/mtcnn.cpp
+			src/network.h
 			src/network.cpp
-			src/pnet.cpp
-			src/rnet.cpp
-			src/onet.cpp
-			src/svm.cpp)
+			src/pnet_rt.h
+			src/pnet_rt.cpp
+			src/rnet_rt.h
+			src/rnet_rt.cpp
+			src/onet_rt.h
+			src/onet_rt.cpp
+			src/svm.h
+			src/svm.cpp
+			src/pBox.h)
+
+add_executable(addID 
+			src/main_addID.cpp 
+			src/baseEngine.h
+			src/baseEngine.cpp
+			src/common.h
+			src/common.cpp 
+			src/mtcnn.h
+			src/mtcnn.cpp
+			src/network.h
+			src/network.cpp
+			src/pnet_rt.h
+			src/pnet_rt.cpp
+			src/rnet_rt.h
+			src/rnet_rt.cpp
+			src/onet_rt.h
+			src/onet_rt.cpp
+			src/svm.h
+			src/svm.cpp
+			src/pBox.h)
 
 target_link_libraries( predict ${TORCH_LIBRARIES})
 target_link_libraries( predict ${OpenCV_LIBS})
@@ -43,6 +71,14 @@ target_link_libraries( predict openblas)
 target_link_libraries( predict cudart)
 target_link_libraries( predict nvinfer)
 target_link_libraries( predict nvparsers)
+
+target_link_libraries( addID ${TORCH_LIBRARIES})
+target_link_libraries( addID ${OpenCV_LIBS})
+target_link_libraries( addID openblas)
+target_link_libraries( addID cudart)
+target_link_libraries( addID nvinfer)
+target_link_libraries( addID nvparsers)
+
 
 
 
