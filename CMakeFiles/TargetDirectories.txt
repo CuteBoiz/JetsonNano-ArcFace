@@ -1,0 +1,3 @@
+/home/vinh/Desktop/Cpp-Facenet/CMakeFiles/rebuild_cache.dir
+/home/vinh/Desktop/Cpp-Facenet/CMakeFiles/edit_cache.dir
+/home/vinh/Desktop/Cpp-Facenet/CMakeFiles/main.dir
