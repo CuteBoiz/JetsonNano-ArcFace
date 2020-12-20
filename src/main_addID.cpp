@@ -83,6 +83,7 @@ int main(){
         }
         else if (nrof_imgs == MAX_IMGS){
             putText(frame, "DONE! WAIT A SEC.", Point(frame.cols/2-50, frame.rows/2), FONT_HERSHEY_SIMPLEX, 1, Scalar(255, 255, 255), 2, LINE_AA);
+            //LAY DUOWNG DAN TRAIN
             //LOAD & TRAIN NEW SVMs
             cout << "Added " << IDName << " Successfully!";
             return -1;
