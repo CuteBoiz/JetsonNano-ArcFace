@@ -5,6 +5,7 @@
 #include <torch/torch.h>
 
 #include "svm.h"
+#include "train_svm.h"
 #include "mtcnn.h"
 
 #include <iostream>

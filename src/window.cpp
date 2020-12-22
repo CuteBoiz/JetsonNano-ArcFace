@@ -8,8 +8,8 @@ Window::Window(QWidget *parent)
 {
     ui->setupUi(this);
 
-    if((model=svm_load_model("Data/test.model"))==0){
-        fprintf(stderr,"Can't open model file %s\n","test.model");
+    if((model=svm_load_model("Data/svm.model"))==0){
+        fprintf(stderr,"Can't open model file %s\n","svm.model");
         ui->lblStatus->setText("Can not detect any SVM!");
     }
     else{
@@ -96,7 +96,7 @@ void Window::updateFrame(){
             cv::line(frame, Point(x, y), Point(x+sin(angle)*15, y+cos(angle)*15), Scalar(255, 255, 255), 2);
         }
 
-        if (nrof_imgs < MAX_IMGS){
+        if (nrof_imgs < MAX_IMGS) {
             mkdir(SAVE_ID_DIR.c_str(), 0777);
             string dirName = SAVE_ID_DIR + IDName + "/";
             mkdir(dirName.c_str(), 0777);
@@ -122,18 +122,24 @@ void Window::updateFrame(){
             }
             Boxes.clear();
         }
-        else if (nrof_imgs == MAX_IMGS){
+        else if (nrof_imgs == MAX_IMGS) {
             cv::putText(frame, "DONE! WAIT A SEC.", Point(frame.cols/2-50, frame.rows/2), FONT_HERSHEY_SIMPLEX, 1, Scalar(255, 255, 255), 2, LINE_AA);
-            system("./createSVM");
-            QMessageBox::information(this, "Done!", ("Added " + IDName + " Successfully!").c_str());
+            string Dataset_dir = "../Dataset/";
+            string save_dir = "Data/";
+            create_txt(Dataset_dir, save_dir);
+            create_train_svm(save_dir);
+            if (system("./createSVM"))
+                QMessageBox::information(this, "Done!", ("Added " + IDName + " Successfully!").c_str());
+            else
+                QMessageBox::information(this, "Failed!", ("Can not create SVM model!"));
             ADD_ID = false;
             nrof_imgs = 1;
             IDName = "";
 
             ui->lblStatus->setText("Predicting ...");
 
-            if((model=svm_load_model("Data/test.model"))==0){
-                fprintf(stderr,"Can't open model file %s\n","test.model");
+            if((model=svm_load_model("Data/svm.model"))==0){
+                fprintf(stderr,"Can't open model file %s\n","svm.model");
                 ui->lblStatus->setText("Can not detect any SVM!");
             }
             else{

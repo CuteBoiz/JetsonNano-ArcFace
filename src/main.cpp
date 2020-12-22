@@ -3,10 +3,8 @@
 
 int main(int argc, char *argv[])
 {
-    // QApplication a(argc, argv);
-    // Window w;
-    // w.show();
-    // return a.exec();
-    system("./createSVM");
-    return 1;
+    QApplication a(argc, argv);
+    Window w;
+    w.show();
+    return a.exec();
 }
