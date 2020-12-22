@@ -24,7 +24,7 @@ Window::Window(QWidget *parent)
         PREDICT_RDY = true;
     }
 
-    newfile.open("Data/inverse_label.txt",ios::in);
+    newfile.open("Data/label.txt",ios::in);
     if (newfile.is_open()){  
         string tp;
         while(getline(newfile, tp)) label.push_back(tp);
@@ -33,10 +33,9 @@ Window::Window(QWidget *parent)
 
     connect(ui->btnAdd, SIGNAL(clicked()), this, SLOT(add()));
     cap.open(0);
-    if(!cap.isOpened()){
-        QMessageBox::information(this, "Failed To Open Webcam", "Please Check Your Pluged-Webcam!");
-        return;
-    }
+    cap.set(cv::CAP_PROP_FRAME_WIDTH, 640);
+    cap.set(cv::CAP_PROP_FRAME_HEIGHT, 480);
+    cap.set(cv::CAP_PROP_FPS, 30);
     
     internalTime = new QTimer(this);
     connect(internalTime, SIGNAL(timeout()), this, SLOT(updateFrame()));
@@ -164,7 +163,9 @@ void Window::updateFrame(){
        }
     }
     else{
+	cout << "HERE1!\n";
         vector<struct Bbox> Boxes = detector.findFace(frame);
+	cout << "HERE2!\n";
         for(vector<struct Bbox>::iterator it=Boxes.begin(); it!=Boxes.end();it++){
             if((*it).exist){
                 cv::Mat face = frame(Rect((*it).y1, (*it).x1, abs((*it).y1 - (*it).y2), abs((*it).x1 - (*it).x2)));
