@@ -90,32 +90,13 @@ add_executable(main
 			src/train_svm.cpp)
 
 
-
-
-
-target_link_libraries( predict ${TORCH_LIBRARIES})
-target_link_libraries( predict ${OpenCV_LIBS})
-target_link_libraries( predict openblas)
-target_link_libraries( predict cudart)
-
-target_link_libraries( addID ${TORCH_LIBRARIES})
-target_link_libraries( addID ${OpenCV_LIBS})
-target_link_libraries( addID openblas)
-target_link_libraries( addID cudart)
-
-target_link_libraries(predict ${TENSORRT_LIBRARY})
-target_link_libraries(addID ${TENSORRT_LIBRARY})
-
+target_link_libraries( main ${TORCH_LIBRARIES})
+target_link_libraries( main ${OpenCV_LIBS})
+target_link_libraries( main openblas)
+target_link_libraries( main cudart)
+target_link_libraries( main ${TENSORRT_LIBRARY})
+target_link_libraries( main ${TENSORRT_LIBRARY})
 target_link_libraries( main Qt5::Core Qt5::Quick Qt5::Widgets)
 target_link_libraries( main stdc++fs)
 
-
-set_property(TARGET predict PROPERTY CXX_STANDARD 14)
-set_property(TARGET addID PROPERTY CXX_STANDARD 14)
-
-
-
-
-
-
-
+set_property(TARGET main PROPERTY CXX_STANDARD 14)
