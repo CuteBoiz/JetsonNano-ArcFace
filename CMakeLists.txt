@@ -56,7 +56,12 @@ add_executable(main
 			src/window.cpp
 			src/window.h
 			src/window.ui
-			src/ui_window.h
+			src/ui_window.h)
+
+add_executable(createSVM
+			src/main_createSVM.cpp
+			src/svm.h
+			src/svm.cpp
 			src/train_svm.h
 			src/train_svm.cpp)
 
@@ -67,7 +72,10 @@ target_link_libraries( main cudart)
 target_link_libraries( main nvinfer)
 target_link_libraries( main nvparsers)
 target_link_libraries( main Qt5::Core Qt5::Quick Qt5::Widgets)
-target_link_libraries( main stdc++fs)
+
+target_link_libraries( createSVM ${TORCH_LIBRARIES})
+target_link_libraries( createSVM ${OpenCV_LIBS})
+target_link_libraries( createSVM stdc++fs)
 
 
 

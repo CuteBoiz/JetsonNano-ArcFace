@@ -124,11 +124,7 @@ void Window::updateFrame(){
         }
         else if (nrof_imgs == MAX_IMGS){
             cv::putText(frame, "DONE! WAIT A SEC.", Point(frame.cols/2-50, frame.rows/2), FONT_HERSHEY_SIMPLEX, 1, Scalar(255, 255, 255), 2, LINE_AA);
-            string Dataset_dir = "../Dataset/";
-            string save_dir = "Data/";
-            create_txt(Dataset_dir, save_dir);
-            create_train_svm(save_dir);
-            create_svm(save_dir);
+            system("./createSVM");
             QMessageBox::information(this, "Done!", ("Added " + IDName + " Successfully!").c_str());
             ADD_ID = false;
             nrof_imgs = 1;
@@ -157,15 +153,11 @@ void Window::updateFrame(){
                 string tp;
                 while(getline(newfile, tp)) label.push_back(tp);
                 newfile.close();
-            }
-
-            
+            }            
        }
     }
     else{
-	cout << "HERE1!\n";
         vector<struct Bbox> Boxes = detector.findFace(frame);
-	cout << "HERE2!\n";
         for(vector<struct Bbox>::iterator it=Boxes.begin(); it!=Boxes.end();it++){
             if((*it).exist){
                 cv::Mat face = frame(Rect((*it).y1, (*it).x1, abs((*it).y1 - (*it).y2), abs((*it).x1 - (*it).x2)));

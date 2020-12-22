@@ -239,33 +239,40 @@ void read_problem(const char *filename){
         readline(fp);
         prob.x[i] = &x_space[j];
         label = strtok(line," \t\n");
-        if(label == NULL) // empty line
+        if(label == NULL){ // empty line
+            cout << "HERE1! " << endl;
             exit_input_error(i+1);
+        }
 
         prob.y[i] = strtod(label,&endptr);
-        if(endptr == label || *endptr != '\0')
+        if(endptr == label || *endptr != '\0'){
+            cout << "HERE2! " << endl;
             exit_input_error(i+1);
+        }
 
         while(1)
         {
             idx = strtok(NULL,":");
             val = strtok(NULL," \t");
 
-            if(val == NULL)
-                break;
+            if(val == NULL) break;
 
             errno = 0;
             x_space[j].index = (int) strtol(idx,&endptr,10);
-            if(endptr == idx || errno != 0 || *endptr != '\0' || x_space[j].index <= inst_max_index)
+            if(endptr == idx || errno != 0 || *endptr != '\0' || x_space[j].index <= inst_max_index){
+                cout << "HERE3! " << endl;
                 exit_input_error(i+1);
-            else
+            }
+            else{
                 inst_max_index = x_space[j].index;
+            }
 
             errno = 0;
             x_space[j].value = strtod(val,&endptr);
-            if(endptr == val || errno != 0 || (*endptr != '\0' && !isspace(*endptr)))
+            if(endptr == val || errno != 0 || (*endptr != '\0' && !isspace(*endptr))){
+                cout << "HERE4! " << endl;
                 exit_input_error(i+1);
-
+            }
             ++j;
         }
 

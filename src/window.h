@@ -5,7 +5,6 @@
 #include <torch/torch.h>
 
 #include "svm.h"
-#include "train_svm.h"
 #include "mtcnn.h"
 
 #include <iostream>
@@ -39,8 +38,6 @@ static struct svm_model *model;
 static torch::jit::script::Module module;
 static int svm_type;
 static int nr_class;
-
-
 
 static string SAVE_ID_DIR = "../Dataset/";
 static mtcnn detector(480, 640);
