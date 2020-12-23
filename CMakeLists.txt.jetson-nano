@@ -79,16 +79,20 @@ add_executable(main
 			src/rnet_rt.cpp
 			src/onet_rt.h
 			src/onet_rt.cpp
-			src/svm.h
-			src/svm.cpp
 			src/pBox.h
 			src/window.cpp
 			src/window.h
 			src/window.ui
 			src/ui_window.h
+			src/svm.h
+			src/svm.cpp
 			src/train_svm.h
 			src/train_svm.cpp)
 
+add_executable(createSVM
+			src/main_createSVM.cpp
+			src/svm.h
+			src/svm.cpp)
 
 target_link_libraries( main ${TORCH_LIBRARIES})
 target_link_libraries( main ${OpenCV_LIBS})

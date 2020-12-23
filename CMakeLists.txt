@@ -50,8 +50,6 @@ add_executable(main
 			src/rnet_rt.cpp
 			src/onet_rt.h
 			src/onet_rt.cpp
-			src/svm.h
-			src/svm.cpp
 			src/pBox.h
 			src/window.cpp
 			src/window.h
@@ -74,6 +72,7 @@ target_link_libraries( main cudart)
 target_link_libraries( main nvinfer)
 target_link_libraries( main nvparsers)
 target_link_libraries( main Qt5::Core Qt5::Quick Qt5::Widgets)
+target_link_libraries( main stdc++fs)
 
 
 
