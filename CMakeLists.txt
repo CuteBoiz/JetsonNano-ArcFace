@@ -60,10 +60,6 @@ add_executable(main
 			src/train_svm.h
 			src/train_svm.cpp)
 
-add_executable(createSVM
-			src/main_createSVM.cpp
-			src/svm.h
-			src/svm.cpp)
 
 target_link_libraries( main ${TORCH_LIBRARIES})
 target_link_libraries( main ${OpenCV_LIBS})

@@ -135,10 +135,7 @@ void Window::updateFrame(){
             string save_dir = "Data/";
             create_txt(Dataset_dir, save_dir);
             create_train_svm(save_dir);
-            if (system("./createSVM"))
-                QMessageBox::information(this, "Done!", ("Added " + IDName + " Successfully!").c_str());
-            else
-                QMessageBox::information(this, "Failed!", ("Can not create SVM model!"));
+            QMessageBox::information(this, "Done!", ("Added " + IDName + " Successfully!").c_str());
             ADD_ID = false;
             nrof_imgs = 1;
             IDName = "";
@@ -185,10 +182,11 @@ void Window::updateFrame(){
                     confidence_obj << A.confidence * 100;
                     string conf = confidence_obj.str();
                     string result_text = label[(int)(A.class_name)] + " " + conf;
-                    if (A.confidence  > 0.6)
-                        cv::putText(frame, result_text.c_str(), Point((*it).y1, (*it).x1), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(255, 255, 255), 1, LINE_AA);
-                    else
-                        cv::putText(frame, "Unknown", Point((*it).y1, (*it).x1), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(255, 255, 255), 1, LINE_AA);
+                     cv::putText(frame, result_text.c_str(), Point((*it).y1, (*it).x1), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(255, 255, 255), 1, LINE_AA);
+                    // if (A.confidence  > 0.6)
+                    //     cv::putText(frame, result_text.c_str(), Point((*it).y1, (*it).x1), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(255, 255, 255), 1, LINE_AA);
+                    // else
+                    //     cv::putText(frame, "Unknown", Point((*it).y1, (*it).x1), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(255, 255, 255), 1, LINE_AA);
                 }
             }
         }
