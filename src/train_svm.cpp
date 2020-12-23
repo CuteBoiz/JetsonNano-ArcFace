@@ -37,6 +37,8 @@ string** read_directory(string read_path){
 }
 
 void write_file_txt(string** directory, string destination_folder){
+
+    idx = 0;
     ofstream myfile, labels;
 
     myfile.open (destination_folder + "paths.txt");
@@ -94,7 +96,7 @@ void create_txt(string data_path, string destination_folder){
     string* directory = new string[100];
     read_files_inside_one_directory(directory, data_path);
     write_file_name_only(directory, data_path, destination_folder);
-    cout << " Done!" << endl;
+    cout << "Done!" << endl;
 }
 
 void exit_input_error(int line_num)
@@ -105,35 +107,36 @@ void exit_input_error(int line_num)
 
 
 
-void init()
-{
-    void (*print_func)(const char*) = NULL; // default printing to stdout
+// void init()
+// {
+//     void (*print_func)(const char*) = NULL; // default printing to stdout
 
-    // default values
-    param.svm_type = C_SVC;
-    param.kernel_type = LINEAR;
-    param.degree = 3;
-    param.gamma = 0;    // 1/num_features
-    param.coef0 = 0;
-    param.nu = 0.5;
-    param.cache_size = 100;
-    param.C = 1;
-    param.eps = 1e-3;
-    param.p = 0.1;
-    param.shrinking = 1;
-    param.probability = 1;
-    param.nr_weight = 0;
-    param.weight_label = NULL;
-    param.weight = NULL;
-    cross_validation = 0;
-}
+//     // default values
+//     param.svm_type = C_SVC;
+//     param.kernel_type = LINEAR;
+//     param.degree = 3;
+//     param.gamma = 0;    // 1/num_features
+//     param.coef0 = 0;
+//     param.nu = 0.5;
+//     param.cache_size = 100;
+//     param.C = 1;
+//     param.eps = 1e-3;
+//     param.p = 0.1;
+//     param.shrinking = 1;
+//     param.probability = 1;
+//     param.nr_weight = 0;
+//     param.weight_label = NULL;
+//     param.weight = NULL;
+//     cross_validation = 0;
+// }
 
 int create_train_svm(string files_path) {
 
-    init();
+    // init();
     const char *error_msg;
+
     //////////////////////////////////////////////////////////////////////////////////////////
-    cout << "Creating train_file at " << files_path << " ... con ba gia may";
+    cout << "Creating train_file at " << files_path << " ... \n";
     ifstream path,label;
     ofstream train;
     string line_path, line_label;
@@ -156,7 +159,12 @@ int create_train_svm(string files_path) {
         return -1;
     }
 
+
     //////////////////////////////////////////////////////////////////////////////////////////
+    struct svm_model *SVM_MODEL;
+    struct svm_node *x_space;
+    struct svm_problem prob;  
+
     size_t elements, j;
     int i;
 
@@ -164,9 +172,31 @@ int create_train_svm(string files_path) {
 
     elements = 513*idx;
 
+    int cross_validation;
+
     prob.y = Malloc(double,prob.l);
     prob.x = Malloc(struct svm_node *,prob.l);
     x_space = Malloc(struct svm_node,elements);
+    struct svm_parameter param;
+
+    // default values
+    param.svm_type = C_SVC;
+    param.kernel_type = LINEAR;
+    param.degree = 3;
+    param.gamma = 0;    // 1/num_features
+    param.coef0 = 0;
+    param.nu = 0.5;
+    param.cache_size = 100;
+    param.C = 1;
+    param.eps = 1e-3;
+    param.p = 0.1;
+    param.shrinking = 1;
+    param.probability = 1;
+    param.nr_weight = 0;
+    param.weight_label = NULL;
+    param.weight = NULL;
+    cross_validation = 0;
+
 
     j = 0;
 
