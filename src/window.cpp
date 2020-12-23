@@ -8,27 +8,29 @@ Window::Window(QWidget *parent)
 {
     ui->setupUi(this);
 
-    if((model=svm_load_model("Data/svm.model"))==0){
+    if(!(model=svm_load_model("Data/svm.model"))){
         fprintf(stderr,"Can't open model file %s\n","svm.model");
-        ui->lblStatus->setText("Can not detect any SVM!");
+        ui->lblStatus->setText("Add an ID to start predicting!");
+        PREDICT_RDY = false;
     }
     else{
         svm_type = svm_get_svm_type(model);
         nr_class = svm_get_nr_class(model);
-        
         string model_path = "Data/model.pt";
         module = torch::jit::load(model_path);
         cout << "Switch to GPU mode" << endl;
         module.to(at::kCUDA);
-        vector<torch::jit::IValue> inputs;
-        PREDICT_RDY = true;
-    }
 
-    newfile.open("Data/label.txt",ios::in);
-    if (newfile.is_open()){  
-        string tp;
-        while(getline(newfile, tp)) label.push_back(tp);
-        newfile.close();
+        fstream newfile;
+        newfile.open("Data/labels.txt",ios::in);
+        cout << "here1" << endl;
+        if (newfile.is_open()){
+            cout << "here2" << endl;  
+            string tp;
+            while(getline(newfile, tp)) label.push_back(tp);
+            newfile.close();
+        }
+        PREDICT_RDY = true;
     }
 
     connect(ui->btnAdd, SIGNAL(clicked()), this, SLOT(add()));
@@ -40,6 +42,12 @@ Window::Window(QWidget *parent)
     internalTime = new QTimer(this);
     connect(internalTime, SIGNAL(timeout()), this, SLOT(updateFrame()));
     internalTime->start(10);
+}
+
+void Window::closeEvent(QCloseEvent *event){
+    if (QMessageBox::question(this, "Confirm", "Do you want to close ?") == QMessageBox::No) {
+        event->ignore();
+    }
 }
 
 Window::~Window()
@@ -138,28 +146,28 @@ void Window::updateFrame(){
 
             ui->lblStatus->setText("Predicting ...");
 
-            if((model=svm_load_model("Data/svm.model"))==0){
+            if(!(model=svm_load_model("Data/svm.model"))){
                 fprintf(stderr,"Can't open model file %s\n","svm.model");
-                ui->lblStatus->setText("Can not detect any SVM!");
+                ui->lblStatus->setText("Add an ID to start predicting!");
+                PREDICT_RDY = false;
             }
             else{
                 svm_type = svm_get_svm_type(model);
                 nr_class = svm_get_nr_class(model);
-                
                 string model_path = "Data/model.pt";
                 module = torch::jit::load(model_path);
                 cout << "Switch to GPU mode" << endl;
                 module.to(at::kCUDA);
-                vector<torch::jit::IValue> inputs;
+
+                fstream newfile;
+                newfile.open("Data/labels.txt",ios::in);
+                if (newfile.is_open()){  
+                    string tp;
+                    while(getline(newfile, tp)) label.push_back(tp);
+                    newfile.close();
+                }            
                 PREDICT_RDY = true;
             }
-
-            newfile.open("Data/label.txt",ios::in);
-            if (newfile.is_open()){  
-                string tp;
-                while(getline(newfile, tp)) label.push_back(tp);
-                newfile.close();
-            }            
        }
     }
     else{
@@ -172,6 +180,7 @@ void Window::updateFrame(){
                 
                 if (PREDICT_RDY){
                     result A = predict(face);
+                    cout << A.confidence << " " << A.class_name << endl;
                     ostringstream confidence_obj;
                     confidence_obj << std::fixed;
                     confidence_obj << std::setprecision(2);
@@ -200,7 +209,6 @@ result predict(Mat faces){
     result A;
     double *prob_estimates=NULL;
     double predict_label;
-    vector<torch::jit::IValue> inputs;
     cv::resize(faces, faces, Size(112,112));
     faces.convertTo(faces, CV_32FC3, 1.0f / 255.0f);
 
@@ -212,7 +220,6 @@ result predict(Mat faces){
     input_tensor = input_tensor.to(at::kCUDA);
     torch::Tensor out_tensor = module.forward({input_tensor}).toTensor();
 
-
     for(int i = 0; i < 512; i++){
         x[i].index = i;
         x[i].value = out_tensor[0][i].item<double>();
@@ -220,7 +227,6 @@ result predict(Mat faces){
     x[512].index = -1;
     prob_estimates = (double *) malloc(nr_class*sizeof(double));
     predict_label = svm_predict_probability(model,x,prob_estimates);
-
     A.class_name = predict_label;
     A.confidence = *(prob_estimates);
     return A;

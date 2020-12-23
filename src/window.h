@@ -60,7 +60,9 @@ public slots:
     void updateFrame();
 private slots:
     void add();
-
+    
+protected:
+    void closeEvent(QCloseEvent *event);
 private:
     Ui::Window *ui;
 
@@ -77,7 +79,6 @@ private:
     clock_t start;
     double fps;
 
-    fstream newfile;
     vector<string> label;
 };
 #endif // WINDOW_H
