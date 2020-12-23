@@ -10,6 +10,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <cstdio>
 #include <ctime>
 #include <sys/stat.h>
 #include <iomanip>
@@ -76,8 +77,8 @@ private:
     string IDName;
     int nrof_imgs = 1;
 
-    clock_t start;
-    double fps;
+    std::clock_t start;
+    int fps;
 
     vector<string> label;
 };

@@ -22,10 +22,8 @@ Window::Window(QWidget *parent)
         module.to(at::kCUDA);
 
         fstream newfile;
-        newfile.open("Data/labels.txt",ios::in);
-        cout << "here1" << endl;
+        newfile.open("Data/names.txt",ios::in);
         if (newfile.is_open()){
-            cout << "here2" << endl;  
             string tp;
             while(getline(newfile, tp)) label.push_back(tp);
             newfile.close();
@@ -72,7 +70,8 @@ void Window::add(){
 }
 
 void Window::updateFrame(){
-    start = clock();
+    
+    start = std::clock();
     cap.read(frame);
     if (frame.empty()){
         QMessageBox::information(this, "Frame Error!", "Can't read the webcam/video.");
@@ -160,7 +159,7 @@ void Window::updateFrame(){
                 module.to(at::kCUDA);
 
                 fstream newfile;
-                newfile.open("Data/labels.txt",ios::in);
+                newfile.open("Data/names.txt",ios::in);
                 if (newfile.is_open()){  
                     string tp;
                     while(getline(newfile, tp)) label.push_back(tp);
@@ -176,25 +175,27 @@ void Window::updateFrame(){
             if((*it).exist){
                 cv::Mat face = frame(Rect((*it).y1, (*it).x1, abs((*it).y1 - (*it).y2), abs((*it).x1 - (*it).x2)));
                 cv::rectangle(frame, Point((*it).y1, (*it).x1), Point((*it).y2, (*it).x2), Scalar(255,0,0), 2,8,0);
-                for(int num=0;num<5;num++)circle(frame,Point((int)*(it->ppoint+num), (int)*(it->ppoint+num+5)),3,Scalar(0,255,255), -1);
+                //for(int num=0;num<5;num++)circle(frame,Point((int)*(it->ppoint+num), (int)*(it->ppoint+num+5)),3,Scalar(0,255,255), -1);
                 
                 if (PREDICT_RDY){
                     result A = predict(face);
-                    cout << A.confidence << " " << A.class_name << endl;
                     ostringstream confidence_obj;
                     confidence_obj << std::fixed;
                     confidence_obj << std::setprecision(2);
                     confidence_obj << A.confidence * 100;
                     string conf = confidence_obj.str();
                     string result_text = label[(int)(A.class_name)] + " " + conf;
-                    cv::putText(frame, result_text.c_str(), Point((*it).y1, (*it).x1), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(255, 255, 255), 1, LINE_AA);
+                    if (A.confidence  > 0.6)
+                        cv::putText(frame, result_text.c_str(), Point((*it).y1, (*it).x1), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(255, 255, 255), 1, LINE_AA);
+                    else
+                        cv::putText(frame, "Unknown", Point((*it).y1, (*it).x1), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(255, 255, 255), 1, LINE_AA);
                 }
             }
         }
         Boxes.clear();
     }
 
-    fps = (1/((double)start/CLOCKS_PER_SEC));
+    fps = (1 / ((std::clock() - start ) / (double)CLOCKS_PER_SEC));
     cv::putText(frame, to_string(fps)+" fps", Point(15, 30), FONT_HERSHEY_SIMPLEX, 1, Scalar(255, 255, 255), 1, LINE_AA);
     cv::cvtColor(frame, frame, COLOR_BGR2RGB);
     QImage qFrame((uchar*)frame.data, frame.cols, frame.rows, frame.step, QImage::Format_RGB888);

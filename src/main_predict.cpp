@@ -42,11 +42,9 @@ int main()
     module = torch::jit::load(model_path);
     cout << "Switch to GPU mode" << endl;
     module.to(at::kCUDA);
-    vector<torch::jit::IValue> inputs;
-
     fstream newfile;
     vector<string> label;
-    newfile.open("Data/inverse_label.txt",ios::in);
+    newfile.open("Data/names.txt",ios::in);
     if (newfile.is_open()){  
         string tp;
         while(getline(newfile, tp)) label.push_back(tp);
@@ -55,10 +53,6 @@ int main()
 
     Mat frame;
     VideoCapture cap(0);
-    if(!cap.isOpened()){
-        cout<<"Fail to open video!"<<endl;
-        return -1;
-    }
     clock_t start;
     cap>>frame;
     if(!frame.data) {
@@ -92,7 +86,7 @@ int main()
         Boxes.clear();
         imshow("result", frame);
         start = clock() - start;
-        cout << "FPS: " << (int)(1/((double)start/CLOCKS_PER_SEC))<<endl;
+        cout << "FPS: " << (int)(1/(((clock() - start)/(double)CLOCKS_PER_SEC)))<<endl;
         if( waitKey(1)>=0 ) break;
     }
     cap.release();
