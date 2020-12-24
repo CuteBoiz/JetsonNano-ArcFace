@@ -9,7 +9,7 @@ C++ Arcface with TensorRT + GUI  on Jetson Nano
 - [OpenBlas]()
 - [Qt]()
 
-If you on Jetson you don't have to install Cuda/CuDNN/TensorRT.
+If you are using Jetson you don't have to install Cuda/CuDNN/TensorRT.
 
 ## Compile &  Run
 *Clone project*
