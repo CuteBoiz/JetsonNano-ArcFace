@@ -22,6 +22,7 @@ cd JetsonNano-ArcFace
 ```sh
 rm CMakeLists.txt
 mv CMakeLists.txt.jetson-nano  CMakeLists.txt
+gedit CMakeLists.txt #Then change my username (tanphatnguyen) in the file to your username then start compile
 ```
 
 *Compile & Run:*
