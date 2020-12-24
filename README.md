@@ -11,19 +11,20 @@ C++ Arcface with TensorRT + GUI  on Jetson Nano
 
 If you on Jetson you don't have to install Cuda/CuDNN/TensorRT.
 
-## Run
-
+## Compile &  Run
+*Clone project*
 ```sh
 git clone https://github.com/CuteBoiz/JetsonNano-ArcFace
+cd JetsonNano-ArcFace
 ```
 
-*If you using Jetson Nano:*
+*If you are using Jetson Nano:*
 ```sh
 rm CMakeLists.txt
 mv CMakeLists.txt.jetson-nano  CMakeLists.txt
 ```
 
-*Complie & Run*
+*Compile & Run*
 ```sh
 cmake .
 make
