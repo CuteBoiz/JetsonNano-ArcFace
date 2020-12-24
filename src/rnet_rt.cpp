@@ -4,8 +4,8 @@
 #include "rnet_rt.h"
 
 
-Rnet_engine::Rnet_engine() : baseEngine("det2_relu.prototxt",
-                                        "det2_relu.caffemodel",
+Rnet_engine::Rnet_engine() : baseEngine("Data/det2_relu.prototxt",
+                                        "Data/det2_relu.caffemodel",
                                         "data",
                                         "conv5-2",
                                         "prob1"

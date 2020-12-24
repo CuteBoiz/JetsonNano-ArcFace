@@ -5,8 +5,8 @@
 #include <fstream>
 
 // stuff we know about the network and the caffe input/output blobs
-Pnet_engine::Pnet_engine() : baseEngine("det1_relu.prototxt",
-                                        "det1_relu.caffemodel",
+Pnet_engine::Pnet_engine() : baseEngine("Data/det1_relu.prototxt",
+                                        "Data/det1_relu.caffemodel",
                                         "data",
                                         "conv4-2",
                                         "prob1") {
@@ -37,12 +37,12 @@ void Pnet_engine::init(int row, int col) {
     }
     contents.insert(position_w + second_space, to_string(col));
     protofile.close();
-    protofile.open("temp.prototxt", ios::out);
+    protofile.open("Data/temp.prototxt", ios::out);
     protofile.write(contents.c_str(), contents.size());
     protofile.close();
     IHostMemory *gieModelStream{nullptr};
     //generate Tensorrt model
-    caffeToGIEModel("temp.prototxt", model, std::vector<std::string>{OUTPUT_PROB_NAME, OUTPUT_LOCATION_NAME}, 1,
+    caffeToGIEModel("Data/temp.prototxt", model, std::vector<std::string>{OUTPUT_PROB_NAME, OUTPUT_LOCATION_NAME}, 1,
                     gieModelStream);
 
 }
