@@ -23,7 +23,9 @@ Window::Window(QWidget *parent)
 
         fstream newfile;
         newfile.open("Data/names.txt",ios::in);
+
         if (newfile.is_open()){
+            label.clear();
             string tp;
             while(getline(newfile, tp)) label.push_back(tp);
             newfile.close();
@@ -80,28 +82,6 @@ void Window::updateFrame(){
     flip(frame, frame, 1);
 
     if (ADD_ID){
-        int h = frame.rows;
-        int w = frame.cols;
-        int min_side = h < w ? h : w;
-        int radius = min_side / 2 - 20;
-
-        cv::circle(frame, Point((int)w/2, (int)h/2), min_side, Scalar(0, 0, 0), min_side+70);
-        for (int i = 0; i < NORF_LINES; i++) {
-            float angle = 2 * PI * i / NORF_LINES;
-            float x = (int)w/2 + sin(angle) * radius;
-            float y = (int)h/2 + cos(angle) * radius;
-            cv::line(frame, Point(x, y), Point(x+sin(angle)*10, y+cos(angle)*10), Scalar(255, 255, 255), 1);
-        }
-
-        double percent = (double)nrof_imgs/(double)MAX_IMGS;
-        int nrof_big_lines = NORF_LINES * percent;
-
-        for (int j = 0; j < nrof_big_lines; j++){
-            float angle = 2 * PI * j / NORF_LINES;
-            float x = (int)w/2 + sin(angle) * radius;
-            float y = (int)h/2 + cos(angle) * radius;
-            cv::line(frame, Point(x, y), Point(x+sin(angle)*15, y+cos(angle)*15), Scalar(255, 255, 255), 2);
-        }
 
         if (nrof_imgs < MAX_IMGS) {
             mkdir(SAVE_ID_DIR.c_str(), 0777);
@@ -109,10 +89,8 @@ void Window::updateFrame(){
             mkdir(dirName.c_str(), 0777);
             vector<struct Bbox> Boxes = detector.findFace(frame);
             for(vector<struct Bbox>::iterator it=Boxes.begin(); it!=Boxes.end();it++){
-                if((*it).exist){
-                    cv::Mat face = frame(Rect((*it).y1, (*it).x1, abs((*it).y1 - (*it).y2), abs((*it).x1 - (*it).x2)));
-                    cv::rectangle(frame, Point((*it).y1, (*it).x1), Point((*it).y2, (*it).x2), Scalar(0,0,255), 2,8,0);
-                    cv::putText(frame, "TURN HEAD AROUND!", Point(10, 50), FONT_HERSHEY_SIMPLEX, 1, Scalar(255, 255, 255), 2, LINE_AA);
+                if(((*it).exist) && ((*it).y1 > 25) && ((*it).x1 > 25) && ((abs((*it).y1 - (*it).y2) + 25) < frame.cols) && ((abs((*it).x1 - (*it).x2)+ 25) < frame.rows)){
+                    cv::Mat face = frame(Rect((*it).y1 - 25, (*it).x1 - 25, abs((*it).y1 - (*it).y2) + 25, abs((*it).x1 - (*it).x2) + 25));
                     if ((*it).score > 0.99) {
                         string save_file = SAVE_ID_DIR + IDName + "/" + to_string(nrof_imgs) + ".jpg";
                         bool isSuccess = imwrite(save_file, face);
@@ -125,12 +103,14 @@ void Window::updateFrame(){
                             cerr << "ERROR: Failed to save the image \n";
                         }
                     }
+                    cv::rectangle(frame, Point((*it).y1 - 25, (*it).x1 - 25), Point((*it).y2 + 25, (*it).x2 + 25), Scalar(255,0,0), 2,8,0);
+                    cv::putText(frame, "TURN HEAD AROUND!", Point(10, 50), FONT_HERSHEY_SIMPLEX, 1, Scalar(255, 255, 255), 2, LINE_AA);
                 }
             }
             Boxes.clear();
         }
         else if (nrof_imgs == MAX_IMGS) {
-            cv::putText(frame, "DONE! WAIT A SEC.", Point(frame.cols/2-50, frame.rows/2), FONT_HERSHEY_SIMPLEX, 1, Scalar(255, 255, 255), 2, LINE_AA);
+            ui->lblStatus->setText("Training SVM model. Please wait ...");
             string Dataset_dir = "../Dataset/";
             string save_dir = "Data/";
             create_txt(Dataset_dir, save_dir);
@@ -158,20 +138,55 @@ void Window::updateFrame(){
                 fstream newfile;
                 newfile.open("Data/names.txt",ios::in);
                 if (newfile.is_open()){  
+                    label.clear();
                     string tp;
                     while(getline(newfile, tp)) label.push_back(tp);
                     newfile.close();
                 }            
                 PREDICT_RDY = true;
             }
-       }
+        }
+        int h = frame.rows;
+        int w = frame.cols;
+        int min_side = h < w ? h : w;
+        int radius = min_side / 2 - 20;
+
+        // cv::circle(frame, Point((int)w/2, (int)h/2), min_side, Scalar(0, 0, 0), min_side+70);
+        for (int i = 0; i < NORF_LINES; i++) {
+            float angle = 2 * PI * i / NORF_LINES;
+            float x = (int)w/2 + sin(angle) * radius;
+            float y = (int)h/2 + cos(angle) * radius;
+            cv::line(frame, Point(x, y), Point(x+sin(angle)*10, y+cos(angle)*10), Scalar(255, 255, 255), 1);
+        }
+
+        double percent = (double)nrof_imgs/(double)MAX_IMGS;
+        int nrof_big_lines = NORF_LINES * percent;
+
+        for (int j = 0; j < nrof_big_lines; j++){
+            float angle = 2 * PI * j / NORF_LINES;
+            float x = (int)w/2 + sin(angle) * radius;
+            float y = (int)h/2 + cos(angle) * radius;
+            cv::line(frame, Point(x, y), Point(x+sin(angle)*15, y+cos(angle)*15), Scalar(255, 255, 255), 2);
+        }
     }
     else{
         vector<struct Bbox> Boxes = detector.findFace(frame);
         for(vector<struct Bbox>::iterator it=Boxes.begin(); it!=Boxes.end();it++){
             if((*it).exist){
-                cv::Mat face = frame(Rect((*it).y1, (*it).x1, abs((*it).y1 - (*it).y2), abs((*it).x1 - (*it).x2)));
-                cv::rectangle(frame, Point((*it).y1, (*it).x1), Point((*it).y2, (*it).x2), Scalar(255,0,0), 2,8,0);
+
+                cv::Mat face;
+
+                if (((*it).y1 > 25) && ((*it).x1 > 25) && ((abs((*it).y1 - (*it).y2) + 25) < frame.cols) && ((abs((*it).x1 - (*it).x2)+ 25) < frame.rows))
+                {
+                    face = frame(Rect((*it).y1 - 25, (*it).x1 - 25, abs((*it).y1 - (*it).y2) + 25, abs((*it).x1 - (*it).x2) + 25));
+                    cv::rectangle(frame, Point((*it).y1 - 25, (*it).x1 - 25), Point((*it).y2 + 25, (*it).x2 + 25), Scalar(255,0,0), 2,8,0);
+                }
+                else
+                {
+                    face = frame(Rect((*it).y1, (*it).x1, abs((*it).y1 - (*it).y2), abs((*it).x1 - (*it).x2)));
+                    cv::rectangle(frame, Point((*it).y1, (*it).x1), Point((*it).y2, (*it).x2), Scalar(255,0,0), 2,8,0);
+                }
+
                 //for(int num=0;num<5;num++)circle(frame,Point((int)*(it->ppoint+num), (int)*(it->ppoint+num+5)),3,Scalar(0,255,255), -1);
                 
                 if (PREDICT_RDY){
@@ -182,7 +197,7 @@ void Window::updateFrame(){
                     confidence_obj << A.confidence * 100;
                     string conf = confidence_obj.str();
                     string result_text = label[(int)(A.class_name)] + " " + conf;
-                     cv::putText(frame, result_text.c_str(), Point((*it).y1, (*it).x1), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(255, 255, 255), 1, LINE_AA);
+                    cv::putText(frame, result_text.c_str(), Point((*it).y1, (*it).x1), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(255, 255, 255), 1, LINE_AA);
                     // if (A.confidence  > 0.6)
                     //     cv::putText(frame, result_text.c_str(), Point((*it).y1, (*it).x1), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(255, 255, 255), 1, LINE_AA);
                     // else
@@ -227,6 +242,6 @@ result predict(Mat faces){
     prob_estimates = (double *) malloc(nr_class*sizeof(double));
     predict_label = svm_predict_probability(model,x,prob_estimates);
     A.class_name = predict_label;
-    A.confidence = *(prob_estimates);
+    A.confidence = prob_estimates[(int) predict_label];
     return A;
 }
