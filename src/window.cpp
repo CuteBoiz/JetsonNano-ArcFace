@@ -1,5 +1,6 @@
 #include "window.h"
 #include "./ui_window.h"
+#include <unistd.h>
 
 
 Window::Window(QWidget *parent)
@@ -16,6 +17,10 @@ Window::Window(QWidget *parent)
     else{
         svm_type = svm_get_svm_type(model);
         nr_class = svm_get_nr_class(model);
+		
+		scale = 0.8*(100/double(nr_class));
+		step = 0;
+
         string model_path = "Data/model.pt";
         module = torch::jit::load(model_path);
         cout << "Switch to GPU mode" << endl;
@@ -34,7 +39,7 @@ Window::Window(QWidget *parent)
     }
 
     connect(ui->btnAdd, SIGNAL(clicked()), this, SLOT(add()));
-    cap.open(0);
+    cap.open(1);
     cap.set(cv::CAP_PROP_FRAME_WIDTH, 640);
     cap.set(cv::CAP_PROP_FRAME_HEIGHT, 480);
     cap.set(cv::CAP_PROP_FPS, 30);
@@ -131,6 +136,10 @@ void Window::updateFrame(){
                 svm_type = svm_get_svm_type(model);
                 nr_class = svm_get_nr_class(model);
                 string model_path = "Data/model.pt";
+
+				scale = 0.8*(100/double(nr_class));
+				step = 0;
+
                 module = torch::jit::load(model_path);
                 cout << "Switch to GPU mode" << endl;
                 module.to(at::kCUDA);
@@ -196,23 +205,45 @@ void Window::updateFrame(){
                     confidence_obj << std::setprecision(2);
                     confidence_obj << A.confidence * 100;
                     string conf = confidence_obj.str();
-                    string result_text = label[(int)(A.class_name)] + " " + conf;
-                    cv::putText(frame, result_text.c_str(), Point((*it).y1, (*it).x1), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(255, 255, 255), 1, LINE_AA);
-                    // if (A.confidence  > 0.6)
-                    //     cv::putText(frame, result_text.c_str(), Point((*it).y1, (*it).x1), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(255, 255, 255), 1, LINE_AA);
-                    // else
-                    //     cv::putText(frame, "Unknown", Point((*it).y1, (*it).x1), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(255, 255, 255), 1, LINE_AA);
+					string result_text;
+					if (int(A.class_name) != -1){
+                    	result_text = label[(int)(A.class_name)] + " " + conf;
+						if(step == 0 || (step%5) != 0)
+							step++;
+
+						else if (step != 0 && (step%5) == 0)
+						{
+							step = 0;
+							//puttext
+							open_str = "Open for " + label[(int)(A.class_name)] + ", Please wait for 5s!";
+							cout << open_str << endl;
+							open = true;
+							cv::putText(frame, open_str, Point(50, 50), FONT_HERSHEY_SIMPLEX, 1, Scalar(255, 0, 0), 1, LINE_AA);
+							temp = 0;
+						}
+					}
+					else{
+						result_text = "Unknown";
+						step = 0;
+					}
+                    cv::putText(frame, result_text.c_str(), Point((*it).y1, (*it).x1), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 0, 255), 1, LINE_AA);
                 }
             }
         }
         Boxes.clear();
     }
-
-    fps = (1 / ((std::clock() - start ) / (double)CLOCKS_PER_SEC));
-    cv::putText(frame, to_string(fps)+" fps", Point(15, 30), FONT_HERSHEY_SIMPLEX, 1, Scalar(255, 255, 255), 1, LINE_AA);
-    cv::cvtColor(frame, frame, COLOR_BGR2RGB);
+	
+	fps = (1 / ((std::clock() - start ) / (double)CLOCKS_PER_SEC));
+	cv::putText(frame, to_string(fps)+" fps", Point(15, 30), FONT_HERSHEY_SIMPLEX, 1, Scalar(255, 0, 0), 1, LINE_AA);
+	cv::cvtColor(frame, frame, COLOR_BGR2RGB);
+	
     QImage qFrame((uchar*)frame.data, frame.cols, frame.rows, frame.step, QImage::Format_RGB888);
     ui->lblImg->setPixmap(QPixmap::fromImage(qFrame));
+	temp++;
+	if (open && temp == 2){
+		sleep(5);
+		open = false;
+	}
 }
 
 
@@ -241,7 +272,45 @@ result predict(Mat faces){
     x[512].index = -1;
     prob_estimates = (double *) malloc(nr_class*sizeof(double));
     predict_label = svm_predict_probability(model,x,prob_estimates);
-    A.class_name = predict_label;
-    A.confidence = prob_estimates[(int) predict_label];
+    double arr[nr_class];
+
+    for (int i = 0; i < nr_class; i++)
+        arr[i] = prob_estimates[i];
+
+    int n = sizeof(arr)/sizeof(arr[0]);
+
+    std::sort(arr, arr + n);
+
+    if (nr_class > 25)
+    {
+        if (arr[nr_class - 1]/arr[nr_class - 2] < 3)
+        {
+            A.class_name = -1;
+            A.confidence = 0;
+        }
+
+        else
+        {
+            A.class_name = predict_label;
+            A.confidence = prob_estimates[(int) predict_label];
+        }
+    }
+
+    else if (nr_class < 25)
+    {
+
+        if (arr[nr_class - 1]/arr[nr_class - 2] < scale)
+        {
+            A.class_name = -1;
+            A.confidence = 0;
+        }
+
+        else
+        {
+            A.class_name = predict_label;
+            A.confidence = prob_estimates[(int) predict_label];
+        }
+    }
+
     return A;
 }

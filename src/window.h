@@ -40,9 +40,13 @@ static struct svm_model *model;
 static torch::jit::script::Module module;
 static int svm_type;
 static int nr_class;
-
+static double scale;
+static int step;
+static bool open = false;
+static string open_str;
 static string SAVE_ID_DIR = "../Dataset/";
 static mtcnn detector(480, 640);
+static int temp = 0;
 
 result predict(Mat faces);
 
