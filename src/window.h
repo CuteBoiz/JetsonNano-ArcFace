@@ -28,7 +28,7 @@ using namespace std;
 
 #define PI  3.141592653589793238463
 #define NORF_LINES 256
-#define MAX_IMGS 100
+#define MAX_IMGS 128
 
 struct result{
     double class_name;

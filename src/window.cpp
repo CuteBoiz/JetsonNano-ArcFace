@@ -18,7 +18,7 @@ Window::Window(QWidget *parent)
         svm_type = svm_get_svm_type(model);
         nr_class = svm_get_nr_class(model);
 		
-		scale = 0.8*(100/double(nr_class));
+		scale = (100/double(nr_class));
 		step = 0;
 
         string model_path = "Data/model.pt";
@@ -137,7 +137,7 @@ void Window::updateFrame(){
                 nr_class = svm_get_nr_class(model);
                 string model_path = "Data/model.pt";
 
-				scale = 0.8*(100/double(nr_class));
+				scale = (100/double(nr_class));
 				step = 0;
 
                 module = torch::jit::load(model_path);
