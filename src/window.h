@@ -14,6 +14,7 @@
 #include <ctime>
 #include <sys/stat.h>
 #include <iomanip>
+#include <sys/time.h> 
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
@@ -29,6 +30,7 @@ using namespace std;
 #define PI  3.141592653589793238463
 #define NORF_LINES 256
 #define MAX_IMGS 128
+#define MAX_TRUE_FRAME 10
 
 struct result{
     double class_name;
@@ -41,7 +43,7 @@ static torch::jit::script::Module module;
 static int svm_type;
 static int nr_class;
 static double scale;
-static int step;
+
 static bool open = false;
 static string open_str;
 static string SAVE_ID_DIR = "../Dataset/";
@@ -81,8 +83,9 @@ private:
     string IDName;
     int nrof_imgs = 1;
 
-    std::clock_t start;
+    struct timeval start, end;
     int fps;
+    int step;
 
     vector<string> label;
 };

@@ -1,7 +1,5 @@
 #include "window.h"
 #include "./ui_window.h"
-#include <unistd.h>
-
 
 Window::Window(QWidget *parent)
     : QWidget(parent)
@@ -39,7 +37,7 @@ Window::Window(QWidget *parent)
     }
 
     connect(ui->btnAdd, SIGNAL(clicked()), this, SLOT(add()));
-    cap.open(1);
+    cap.open(0);
     cap.set(cv::CAP_PROP_FRAME_WIDTH, 640);
     cap.set(cv::CAP_PROP_FRAME_HEIGHT, 480);
     cap.set(cv::CAP_PROP_FPS, 30);
@@ -76,9 +74,10 @@ void Window::add(){
     ADD_ID = true;
 }
 
+
 void Window::updateFrame(){
-    
-    start = std::clock();
+    gettimeofday(&start, NULL); 
+    ios_base::sync_with_stdio(false); 
     cap.read(frame);
     if (frame.empty()){
         QMessageBox::information(this, "Frame Error!", "Can't read the webcam/video.");
@@ -113,6 +112,7 @@ void Window::updateFrame(){
                 }
             }
             Boxes.clear();
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
         }
         else if (nrof_imgs == MAX_IMGS) {
             ui->lblStatus->setText("Training SVM model. Please wait ...");
@@ -208,17 +208,17 @@ void Window::updateFrame(){
 					string result_text;
 					if (int(A.class_name) != -1){
                     	result_text = label[(int)(A.class_name)] + " " + conf;
-						if(step == 0 || (step%5) != 0)
+						if(step == 0 || (step % MAX_TRUE_FRAME) != 0)
 							step++;
 
-						else if (step != 0 && (step%5) == 0)
+						else if (step != 0 && (step % MAX_TRUE_FRAME) == 0)
 						{
 							step = 0;
 							//puttext
-							open_str = "Open for " + label[(int)(A.class_name)] + ", Please wait for 5s!";
+							open_str = "Opening for " + label[(int)(A.class_name)] + ", Please wait for few secs!";
 							cout << open_str << endl;
 							open = true;
-							cv::putText(frame, open_str, Point(50, 50), FONT_HERSHEY_SIMPLEX, 1, Scalar(255, 0, 0), 1, LINE_AA);
+							cv::putText(frame, open_str, Point(50, 50), FONT_HERSHEY_SIMPLEX, 1, Scalar(0, 0, 255), 1, LINE_AA);
 							temp = 0;
 						}
 					}
@@ -232,16 +232,19 @@ void Window::updateFrame(){
         }
         Boxes.clear();
     }
-	
-	fps = (1 / ((std::clock() - start ) / (double)CLOCKS_PER_SEC));
+	gettimeofday(&end, NULL); 
+    double time_taken; 
+      
+    time_taken = (end.tv_sec - start.tv_sec) * 1e6; 
+    time_taken = (time_taken + (end.tv_usec -  start.tv_usec)) * 1e-6;
+    fps = (1/time_taken);
 	cv::putText(frame, to_string(fps)+" fps", Point(15, 30), FONT_HERSHEY_SIMPLEX, 1, Scalar(255, 0, 0), 1, LINE_AA);
 	cv::cvtColor(frame, frame, COLOR_BGR2RGB);
-	
     QImage qFrame((uchar*)frame.data, frame.cols, frame.rows, frame.step, QImage::Format_RGB888);
     ui->lblImg->setPixmap(QPixmap::fromImage(qFrame));
 	temp++;
 	if (open && temp == 2){
-		sleep(5);
+		std::this_thread::sleep_for(std::chrono::milliseconds(3000));
 		open = false;
 	}
 }
