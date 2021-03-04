@@ -1,5 +1,5 @@
 # JetsonNano-ArcFace
-C++ Arcface with TensorRT + GUI  on Jetson Nano 
+A high-performance face recognition application on Jetson Nano / PC 
 
 ## Required:
 - [Pytorch]()
