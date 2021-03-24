@@ -9,10 +9,6 @@ set(CMAKE_AUTORCC ON)
 
 set(CMAKE_PREFIX_PATH /home/tanphatnguyen/libtorch)
 
-#OpenBlas
-include_directories(/home/tanphatnguyen/OpenBLAS/include)
-link_directories(/home/tanphatnguyen/OpenBLAS/lib)
-
 #cuda
 include_directories(/usr/local/cuda/include)
 link_directories(/usr/local/cuda/lib64)

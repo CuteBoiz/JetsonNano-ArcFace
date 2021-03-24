@@ -17,10 +17,6 @@ link_directories(/home/tanphatnguyen/.local/lib/python3.6/site-packages/torch/li
 set(CMAKE_PREFIX_PATH /home/tanphatnguyen/.local/lib/python3.6/site-packages/torch)
 set(Torch_DIR /home/tanphatnguyen/.local/lib/python3.6/dist-packages/torch)
 
-#OpenBlas
-include_directories(/home/tanphatnguyen/OpenBLAS/include)
-link_directories(/home/tanphatnguyen/OpenBLAS/lib)
-
 #cuda
 include_directories(/usr/local/cuda/include)
 link_directories(/usr/local/cuda/lib64)
