@@ -32,8 +32,9 @@ cd JetsonNano-ArcFace
 
 ```sh
 gedit CMakeLists.txt 
-#Then change my username (tanphatnguyen) in the file to your username
 ```
+- *Change my username (tanphatnguyen) to your username*
+- *Change TensorRT version*
 
 ### Step 3: Compile & Run:
 
