@@ -2,11 +2,9 @@
 A high-performance face recognition application on Jetson Nano / PC 
 
 ## Required:
-- [Pytorch]()
-- [OpenCV 3.x.x]()
-- [Cuda/CuDNN]()
-- [TensorRT]()
-- [OpenBlas]()
+- [Libtorch]()
+- [OpenCV 3.4.x]()
+- [Cuda/CuDNN/TensorRT]()
 - [Qt]()
 
 If you are using Jetson you don't have to install Cuda/CuDNN/TensorRT.
