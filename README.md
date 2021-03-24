@@ -20,20 +20,23 @@ A high-performance face recognition application on Jetson Nano(6-9fps) / PC
 **Note:** *If you are using Jetson you don't have to install Cuda/CuDNN/TensorRT.*
 
 ## II. Clone & Run
-*Clone project:*
+### Step 1: Clone project:
 ```sh
 git clone https://github.com/CuteBoiz/JetsonNano-ArcFace
 cd JetsonNano-ArcFace
 ```
 
-*If you are using Jetson Nano:*
+### Step 2: Edit CmakeList.txt
+
+**Note:** *If you are using Jetson Nano:* `rm CMakeLists.txt && mv CMakeLists.txt.jetson-nano  CMakeLists.txt`
+
 ```sh
-rm CMakeLists.txt
-mv CMakeLists.txt.jetson-nano  CMakeLists.txt
-gedit CMakeLists.txt #Then change my username (tanphatnguyen) in the file to your username then start compile
+gedit CMakeLists.txt 
+#Then change my username (tanphatnguyen) in the file to your username
 ```
 
-*Compile & Run:*
+### Step 3: Compile & Run:
+
 ```sh
 cmake .
 make
