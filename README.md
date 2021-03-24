@@ -1,5 +1,5 @@
 # JetsonNano-ArcFace
-A high-performance face recognition application on Jetson Nano(6-9fps) / PC 
+A high-performance face recognition application on Jetson Nano(6-9fps)/PC(>15ps)
 
 ## I. Required:
 - LibTORCH for C++ ([PC](https://pytorch.org/cppdocs/installing.html)/[Jetson](https://forums.developer.nvidia.com/t/pytorch-for-jetson-version-1-8-0-now-available/72048))
@@ -16,8 +16,7 @@ A high-performance face recognition application on Jetson Nano(6-9fps) / PC
   sudo apt -y install libgflags-dev
   sudo apt -y install --no-install-recommends libboost-all-dev
   ```
-
-**Note:** *If you are using Jetson you don't have to install Cuda/CuDNN/TensorRT.*
+*If you are using Jetson you don't have to install Cuda/CuDNN/TensorRT.*
 
 ## II. Clone & Run
 **Step 1:** Clone project:
