@@ -2,10 +2,10 @@
 A high-performance face recognition application on Jetson Nano(6-9fps) / PC 
 
 ## I. Required:
-- Libtorch for C++ ([PC](https://pytorch.org/cppdocs/installing.html)/[Jetson](https://forums.developer.nvidia.com/t/pytorch-for-jetson-version-1-8-0-now-available/72048))
+- LibTORCH for C++ ([PC](https://pytorch.org/cppdocs/installing.html)/[Jetson](https://forums.developer.nvidia.com/t/pytorch-for-jetson-version-1-8-0-now-available/72048))
 - [OpenCV 3.4.x](https://github.com/CuteBoiz/Ubuntu_Installation/blob/master/opencv.md)
 - [Cuda/CuDNN/TensorRT](https://github.com/CuteBoiz/Ubuntu_Installation/blob/master/cuda.md)
-- [Qt]
+- Qt5-GUI:
   ```sh
   sudo apt -y install cmake cmake-gui cmake-qt-gui
   sudo apt -y install qtbase5-dev
@@ -17,9 +17,9 @@ A high-performance face recognition application on Jetson Nano(6-9fps) / PC
   sudo apt -y install --no-install-recommends libboost-all-dev
   ```
 
-If you are using Jetson you don't have to install Cuda/CuDNN/TensorRT.
+**Note:** *If you are using Jetson you don't have to install Cuda/CuDNN/TensorRT.*
 
-## II. Run
+## II. Clone & Run
 *Clone project:*
 ```sh
 git clone https://github.com/CuteBoiz/JetsonNano-ArcFace
