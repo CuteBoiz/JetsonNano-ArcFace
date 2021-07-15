@@ -51,5 +51,6 @@ make
 - [libSVM](https://www.csie.ntu.edu.tw/~cjlin/libsvm/)
 
 ## To-Do
-[ ] Convert all engine to onnx 
-[ ] Add Pure TensorRT engine
+- [ ] Convert all engine to onnx.
+- [ ] Add export TensorRT engine.
+- [ ] Add Non GUI Inference code.
