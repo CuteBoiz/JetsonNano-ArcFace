@@ -3,8 +3,8 @@ A high-performance face recognition application with GUI on Jetson Nano *(6-9fps
 
 ## I. Required:
 - LibTORCH for C++ ([PC](https://pytorch.org/cppdocs/installing.html)/[Jetson](https://forums.developer.nvidia.com/t/pytorch-for-jetson-version-1-8-0-now-available/72048))
-- [OpenCV 3.4.x](https://github.com/CuteBoiz/Ubuntu_Installation/blob/master/opencv.md)
-- [Cuda/CuDNN/TensorRT (PC)](https://github.com/CuteBoiz/Ubuntu_Installation/blob/master/cuda.md)
+- [OpenCV 3.4.x with CUDA support](https://github.com/CuteBoiz/Ubuntu_Installation/blob/master/wiki/opencv.md) **(Not working with opencv 4.x.x)**
+- [Cuda/CuDNN/TensorRT (PC)](https://github.com/CuteBoiz/Ubuntu_Installation/blob/master/wiki/cuda.md)
 - Qt5-GUI:
   ```sh
   sudo apt -y install cmake cmake-gui cmake-qt-gui
